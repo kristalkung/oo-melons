@@ -1,5 +1,10 @@
 """Classes for melon orders."""
 
+import random
+import datetime
+
+
+today = datetime.date.today()
 
 class AbstractMelonOrder():
     """An abstract base class that other Melon Orders inherit from."""
@@ -12,10 +17,27 @@ class AbstractMelonOrder():
         self.shipped = False
         self.tax = None
     
+    def get_base_price(self, min_price=5, max_price=10):
+
+        surcharge = 0
+
+        # current_date = datetime.date.today().weekday()
+
+        now = datetime.datetime.now()
+
+        if  now.weekday() < 5 and now[3] < 12 and now[3] > 8:
+            surcharge = self.qty * 4
+
+
+        base_price = random.randint(min_price, max_price)
+        return base_price + surcharge
+
+
     def get_total(self):
         """Calculate price, including tax."""
 
-        base_price = 5
+        base_price = self.get_base_price()
+
         if self.species == "Christmas melon":
             base_price = 1.5 * base_price
         total = (1 + self.tax) * self.qty * base_price
@@ -26,7 +48,6 @@ class AbstractMelonOrder():
         """Record the fact than an order has been shipped."""
 
         self.shipped = True
-
 
 class DomesticMelonOrder(AbstractMelonOrder):
     """A melon order within the USA."""
